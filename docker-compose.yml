@@ -1,0 +1,84 @@
+# Levanta el sistema completo: base de datos, API y SPA.
+#   cp .env.example .env  &&  docker compose up --build
+#
+# La sintaxis ${VAR:?mensaje} aborta el arranque con un error explícito cuando
+# la variable no está definida: es el requisito de "fallar si falta una variable"
+# aplicado también fuera del pipeline.
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: promotions-db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?Falta MSSQL_SA_PASSWORD. Copia .env.example a .env y defínela.}
+      MSSQL_PID: Developer
+    ports:
+      - "${DB_PORT_HOST:-1433}:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+    healthcheck:
+      # sqlcmd vive en mssql-tools18 en las imágenes recientes y en mssql-tools
+      # en las anteriores; se prueban ambas rutas porque apuntar solo a una deja
+      # el contenedor permanentemente unhealthy y la pila nunca arranca.
+      # -C confía en el certificado autofirmado de la imagen; -b devuelve
+      # código de salida distinto de cero cuando la consulta falla.
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' -b -o /dev/null || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q 'SELECT 1' -b -o /dev/null"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 30s
+
+  backend:
+    build:
+      context: ./backend
+    container_name: promotions-backend
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      APP_TIMEZONE: ${APP_TIMEZONE:?Falta APP_TIMEZONE}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      HEALTH_DB_TIMEOUT_MS: ${HEALTH_DB_TIMEOUT_MS:-2000}
+      DB_HOST: db
+      DB_PORT: 1433
+      DB_NAME: ${DB_NAME:?Falta DB_NAME}
+      DB_USER: ${DB_USER:?Falta DB_USER}
+      # Un único secreto en todo el proyecto: la contraseña de sa se reutiliza
+      # como credencial de la aplicación en lugar de duplicarla en el .env.
+      DB_PASSWORD: ${MSSQL_SA_PASSWORD:?Falta MSSQL_SA_PASSWORD}
+      DB_ENCRYPT: ${DB_ENCRYPT:-true}
+      DB_TRUST_SERVER_CERTIFICATE: ${DB_TRUST_SERVER_CERTIFICATE:-true}
+      DB_POOL_MAX: ${DB_POOL_MAX:-10}
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      # Node 22 trae fetch global: evita instalar curl solo para el healthcheck.
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.status===200?0:1)).catch(()=>process.exit(1))\""
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: promotions-frontend
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  mssql-data:
