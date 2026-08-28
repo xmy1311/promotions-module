@@ -9,16 +9,11 @@ export type DiscountType = (typeof DISCOUNT_TYPES)[number];
 export const TARGET_TYPES = ['PRODUCT', 'CATEGORY'] as const;
 export type TargetType = (typeof TARGET_TYPES)[number];
 
-/**
- * Asociación excluyente: la promoción apunta a un producto o a una categoría,
- * nunca a ambos ni a ninguno. La misma invariante está replicada como CHECK en
- * la base de datos para que se sostenga aunque alguien escriba por fuera de la API.
- */
+/** Una promocion apunta a un producto o categoría */
 export type PromotionTarget =
   | { type: 'PRODUCT'; productId: number }
   | { type: 'CATEGORY'; category: string };
 
-/** Datos de una promoción antes de existir en la base de datos. */
 export interface PromotionDraft {
   name: string;
   target: PromotionTarget;
@@ -31,7 +26,7 @@ export interface PromotionDraft {
 export interface Promotion extends PromotionDraft {
   id: number;
   status: PromotionStatus;
-  /** Nombre del producto asociado; nulo cuando el objetivo es una categoría. */
+  /** Nulo cuando  es una categoría. */
   productName: string | null;
   createdAt: string;
   updatedAt: string;

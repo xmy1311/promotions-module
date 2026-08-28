@@ -1,9 +1,6 @@
 import pino from 'pino';
 
-/**
- * Log estructurado con redacción explícita: una contraseña o un token nunca
- * deben terminar en el stdout del contenedor, que suele ir a un agregador.
- */
+/** Redacta credenciales: el stdout del contenedor suele ir a un agregador. */
 export function createLogger(level: string): pino.Logger {
   return pino({
     level,

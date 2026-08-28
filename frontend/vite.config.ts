@@ -5,9 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    // En desarrollo el proxy replica lo que Nginx hace en producción, de modo
-    // que la aplicación siempre habla con rutas relativas y nunca necesita
-    // conocer la URL absoluta del backend.
+    // la app usa siempre rutas relativas.
     proxy: {
       '/api': { target: 'http://localhost:3000', changeOrigin: true },
       '/health': { target: 'http://localhost:3000', changeOrigin: true },

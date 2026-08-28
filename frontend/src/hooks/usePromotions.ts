@@ -24,10 +24,7 @@ export function useCategories() {
   return useQuery({ queryKey: ['categories'], queryFn: api.listCategories });
 }
 
-/**
- * Toda mutación invalida lista y resumen: los contadores del panel deben
- * reflejar el cambio inmediatamente, sin que el usuario recargue la página.
- */
+/** se  refresca la lista y los contadores */
 function useInvalidateOnSuccess() {
   const queryClient = useQueryClient();
 

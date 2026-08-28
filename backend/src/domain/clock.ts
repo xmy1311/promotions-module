@@ -1,10 +1,6 @@
 import { todayIn, type IsoDate } from './dates';
 
-/**
- * El dominio nunca llama a `new Date()`. El reloj se inyecta para que los tests
- * fijen "hoy" y el cálculo de vigencia sea determinista independientemente de
- * cuándo se ejecute la suite.
- */
+/** Inyectable para que los tests fijen "hoy"*/
 export interface Clock {
   today(): IsoDate;
 }

@@ -7,8 +7,7 @@ interface Props {
 }
 
 export function SidePanel({ title, onClose, children }: Props) {
-  // Un diálogo modal debe poder cerrarse con Escape: es lo que espera cualquier
-  // usuario de teclado y evita dejarlo atrapado en el panel.
+  //Cerrar el modal con la tecla Escape.
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
       if (event.key === 'Escape') {

@@ -20,8 +20,7 @@ RUN npm ci --omit=dev && npm cache clean --force
 
 COPY --from=build /app/dist ./dist
 
-# La imagen node trae el usuario 'node' sin privilegios: el proceso nunca
-# corre como root.
+# Usuario sin privilegios: el proceso nunca corre como root.
 USER node
 EXPOSE 3000
 

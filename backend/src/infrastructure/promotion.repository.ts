@@ -42,11 +42,7 @@ const SELECT_PROMOTION = `
     LEFT JOIN dbo.products pr ON pr.id = p.product_id
 `;
 
-/**
- * El driver devuelve una columna DATE como Date en UTC medianoche. Convertirla
- * con métodos locales desplazaría el día en cualquier zona negativa, así que se
- * leen los componentes UTC y se reconstruye la cadena ISO.
- */
+/** pasar fecha a formato ISO */
 function toIsoDate(value: Date | string): string {
   if (typeof value === 'string') {
     return value.slice(0, 10);
@@ -89,18 +85,12 @@ function bindDraft(request: sql.Request, draft: PromotionDraft): sql.Request {
     )
     .input('discountType', sql.VarChar(12), draft.discountType)
     .input('discountValue', sql.Decimal(12, 2), draft.discountValue)
-    // Se envían como cadena y no como Date: SQL Server interpreta siempre
-    // 'YYYY-MM-DD' como ISO para el tipo DATE, mientras que un objeto Date
-    // obligaría a un viaje por husos horarios que puede desplazar el día.
+    // SQL Server siempre interpreta 'YYYY-MM-DD' como ISO para el tipo DATE.
     .input('startDate', sql.VarChar(10), draft.startDate)
     .input('endDate', sql.VarChar(10), draft.endDate);
 }
 
-/**
- * Única capa que conoce SQL. Todas las consultas usan parámetros tipados del
- * driver: no hay concatenación de entrada de usuario en ninguna sentencia, de
- * modo que la inyección SQL queda cerrada por construcción y no por saneado.
- */
+/** Única capa con SQL. Solo parámetros tipados: no hay concatenación de entrada. */
 export class SqlPromotionRepository implements PromotionRepository {
   constructor(private readonly pool: sql.ConnectionPool) {}
 

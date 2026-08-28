@@ -12,12 +12,7 @@ function hasAtMostTwoDecimals(value: number): boolean {
   return Number.isFinite(value) && Math.round(value * 100) === value * 100;
 }
 
-/**
- * Reglas de negocio de una promoción. Es una función pura: no conoce HTTP,
- * ni la base de datos, ni el reloj. Devuelve todos los problemas encontrados
- * en lugar de lanzar en el primero, para que el formulario pueda marcar cada
- * campo de una sola vez.
- */
+/** Valida el formulario de creación de una promoción */
 export function validatePromotionDraft(draft: PromotionDraft): FieldIssue[] {
   const issues: FieldIssue[] = [];
 
@@ -107,7 +102,7 @@ function validateDateRange(draft: PromotionDraft): FieldIssue[] {
     return issues;
   }
 
-  // El enunciado exige "posterior": la igualdad de fechas también se rechaza.
+
   if (!isAfter(draft.endDate, draft.startDate)) {
     issues.push({
       field: 'endDate',
@@ -118,10 +113,7 @@ function validateDateRange(draft: PromotionDraft): FieldIssue[] {
   return issues;
 }
 
-/**
- * Vigencia: propiedad derivada de las fechas, independiente del estado.
- * Una promoción puede estar Activa y no vigente hoy, y viceversa.
- */
+/** Una promoción está en vigencia si su fecha de inicio es menor o igual que hoy y su fecha de fin es mayor o igual que hoy. */
 export function isInDateRange(promotion: Promotion, today: IsoDate): boolean {
   return isWithinRange(today, promotion.startDate, promotion.endDate);
 }

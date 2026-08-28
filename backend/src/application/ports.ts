@@ -4,11 +4,7 @@ export interface PromotionFilter {
   status?: PromotionStatus;
 }
 
-/**
- * Contratos que la capa de aplicación necesita. Las implementaciones con SQL
- * viven en `infrastructure/`; los tests usan una implementación en memoria.
- * Es lo que permite probar el 100% de las reglas de negocio sin base de datos.
- */
+/** Implementados con SQL en producción y en memoria en los tests. */
 export interface PromotionRepository {
   findAll(filter?: PromotionFilter): Promise<Promotion[]>;
   findById(id: number): Promise<Promotion | null>;

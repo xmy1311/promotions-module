@@ -97,8 +97,7 @@ export function App() {
   };
 
   const handleDelete = async (promotion: Promotion): Promise<void> => {
-    // Confirmación nativa: suficiente para una acción destructiva puntual y una
-    // dependencia menos que un diálogo propio.
+    // Nativa: una dependencia menos para una acción destructiva puntual.
     if (!window.confirm(`¿Eliminar la promoción "${promotion.name}"?`)) {
       return;
     }

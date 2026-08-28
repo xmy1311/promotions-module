@@ -1,5 +1,4 @@
--- Catálogo mínimo para que la aplicación sea usable al primer arranque.
--- Son datos de demostración, no credenciales ni información sensible.
+-- Datos de demostración para que la aplicación sea usable al primer arranque.
 
 IF NOT EXISTS (SELECT 1 FROM dbo.products)
 BEGIN

@@ -1,9 +1,5 @@
-# Levanta el sistema completo: base de datos, API y SPA.
-#   cp .env.example .env  &&  docker compose up --build
-#
-# La sintaxis ${VAR:?mensaje} aborta el arranque con un error explícito cuando
-# la variable no está definida: es el requisito de "fallar si falta una variable"
-# aplicado también fuera del pipeline.
+# cp .env.example .env  &&  docker compose up --build
+# ${VAR:?mensaje} aborta el arranque si la variable falta.
 services:
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -17,11 +13,8 @@ services:
     volumes:
       - mssql-data:/var/opt/mssql
     healthcheck:
-      # sqlcmd vive en mssql-tools18 en las imágenes recientes y en mssql-tools
-      # en las anteriores; se prueban ambas rutas porque apuntar solo a una deja
-      # el contenedor permanentemente unhealthy y la pila nunca arranca.
-      # -C confía en el certificado autofirmado de la imagen; -b devuelve
-      # código de salida distinto de cero cuando la consulta falla.
+      # Dos rutas de sqlcmd: apuntar solo a una deja el contenedor unhealthy
+      # para siempre si la imagen cambia de layout.
       test:
         [
           "CMD-SHELL",
@@ -47,8 +40,7 @@ services:
       DB_PORT: 1433
       DB_NAME: ${DB_NAME:?Falta DB_NAME}
       DB_USER: ${DB_USER:?Falta DB_USER}
-      # Un único secreto en todo el proyecto: la contraseña de sa se reutiliza
-      # como credencial de la aplicación en lugar de duplicarla en el .env.
+      # Un único secreto: no se duplica la credencial en el .env.
       DB_PASSWORD: ${MSSQL_SA_PASSWORD:?Falta MSSQL_SA_PASSWORD}
       DB_ENCRYPT: ${DB_ENCRYPT:-true}
       DB_TRUST_SERVER_CERTIFICATE: ${DB_TRUST_SERVER_CERTIFICATE:-true}
@@ -59,7 +51,7 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      # Node 22 trae fetch global: evita instalar curl solo para el healthcheck.
+      # fetch global de Node 22: evita instalar curl para el healthcheck.
       test:
         [
           "CMD-SHELL",

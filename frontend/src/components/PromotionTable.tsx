@@ -14,11 +14,7 @@ const actionClass =
   'rounded px-2 py-1 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40';
 
 /**
- * Componente de presentación puro: recibe datos y callbacks. Esto lo hace
- * trivial de probar sin proveedores de consulta ni servidor simulado.
- *
- * Las acciones se muestran según el estado en lugar de renderizarse siempre
- * deshabilitadas: una promoción finalizada simplemente no ofrece acciones.
+ * Las acciones se muestran según el estado, no deshabilitadas.
  */
 export function PromotionTable({ promotions, busyId, onEdit, onTransition, onDelete }: Props) {
   return (

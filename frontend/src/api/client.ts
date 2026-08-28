@@ -20,8 +20,7 @@ interface ApiErrorBody {
   error?: { code?: string; message?: string; details?: FieldIssue[] };
 }
 
-// Ruta relativa por defecto: en Docker, Nginx hace de proxy hacia el backend,
-// así que la URL absoluta nunca queda horneada en el bundle.
+// Ruta relativa: Nginx hace de proxy y la URL del backend no entra en el bundle.
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api';
 
 export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {

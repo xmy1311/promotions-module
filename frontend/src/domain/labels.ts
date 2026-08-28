@@ -1,10 +1,6 @@
 import type { DiscountType, Promotion, PromotionStatus } from './types';
 
-/**
- * El estado viaja y se persiste en inglés; el español vive solo en esta capa de
- * presentación. La etiqueta de la interfaz no debe ser nunca la clave del
- * dominio ni el valor almacenado en la base de datos.
- */
+/** los estados se muestran en la interfaz de usuario en español */
 export const STATUS_LABELS: Record<PromotionStatus, string> = {
   SCHEDULED: 'Programada',
   ACTIVE: 'Activa',

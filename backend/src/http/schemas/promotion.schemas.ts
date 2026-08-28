@@ -15,12 +15,7 @@ const isoDate = z
   .string()
   .refine(isIsoDate, 'Debe tener formato YYYY-MM-DD y corresponder a una fecha real');
 
-/**
- * Zod valida la *forma* del mensaje: tipos, enums, presencia y el XOR del
- * objetivo. Las reglas de negocio (rangos, coherencia de fechas, existencia del
- * objetivo) viven en el dominio. La separación es deliberada: aquí se rechaza
- * lo que ni siquiera es una petición bien formada.
- */
+/** Valida la estructura del cuerpo de la solicitud */
 export const promotionBodySchema = z
   .object({
     name: z.string({ required_error: 'El nombre es obligatorio' }).max(NAME_MAX_LENGTH),
@@ -55,7 +50,6 @@ export const promotionBodySchema = z
 
 export type PromotionBody = z.infer<typeof promotionBodySchema>;
 
-/** Traduce el cuerpo HTTP al modelo del dominio, normalizando el objetivo. */
 export function toPromotionDraft(body: PromotionBody): PromotionDraft {
   return {
     name: body.name,

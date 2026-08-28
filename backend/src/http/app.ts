@@ -21,12 +21,7 @@ export interface AppDependencies {
   corsOrigins: string[];
 }
 
-/**
- * La aplicación recibe sus dependencias ya construidas. Eso permite montarla en
- * los tests con repositorios en memoria, sin base de datos ni variables de
- * entorno, y mantiene `server.ts` como el único lugar que conoce la
- * infraestructura real.
- */
+/** Recibe dependencias ya construidas: los tests la montan sin base de datos. */
 export function createApp(deps: AppDependencies): Express {
   const app = express();
 

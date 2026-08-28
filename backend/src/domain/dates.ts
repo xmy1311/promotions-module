@@ -1,18 +1,10 @@
 /**
- * La vigencia de una promoción es un día civil, no un instante. Por eso las
- * fechas se manejan como cadenas `YYYY-MM-DD` de punta a punta (base de datos,
- * API, formulario) y nunca como `Date`.
- *
- * Consecuencia deliberada: la comparación lexicográfica de dos cadenas ISO
- * coincide con su orden cronológico, así que no existe ninguna conversión de
- * zona horaria en el camino y la clase entera de errores de timezone
- * desaparece por construcción.
- */
+ * Fechas formato `YYYY-MM-DD`.  */
 export type IsoDate = string;
 
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
-/** Valida formato y existencia real del día (rechaza 2026-02-31). */
+/** Rechaza también días que no existen, como 2026-02-31. */
 export function isIsoDate(value: unknown): value is IsoDate {
   if (typeof value !== 'string' || !ISO_DATE_PATTERN.test(value)) {
     return false;
@@ -31,7 +23,6 @@ export function isIsoDate(value: unknown): value is IsoDate {
   );
 }
 
-/** Verifica que la zona horaria sea una zona IANA válida para este runtime. */
 export function isValidTimeZone(timeZone: string): boolean {
   try {
     new Intl.DateTimeFormat('en-CA', { timeZone });
@@ -41,11 +32,7 @@ export function isValidTimeZone(timeZone: string): boolean {
   }
 }
 
-/**
- * Día de hoy en la zona horaria de negocio, no en la del contenedor.
- * Los contenedores y GitHub Actions corren en UTC: sin esto, una promoción que
- * termina hoy dejaría de contarse a las 19:00 hora de Colombia.
- */
+/** Hoy en la zona de negocio, no en la del contenedor. */
 export function todayIn(timeZone: string, now: Date = new Date()): IsoDate {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone,
@@ -60,7 +47,7 @@ export function todayIn(timeZone: string, now: Date = new Date()): IsoDate {
   return `${valueOf('year')}-${valueOf('month')}-${valueOf('day')}`;
 }
 
-/** Rango inclusivo en ambos extremos: `start <= date <= end`. */
+/** Rango inclusivo en ambos extremos. */
 export function isWithinRange(date: IsoDate, start: IsoDate, end: IsoDate): boolean {
   return start <= date && date <= end;
 }

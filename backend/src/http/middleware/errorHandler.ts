@@ -12,11 +12,7 @@ interface ErrorBody {
   };
 }
 
-/**
- * body-parser marca así un cuerpo que no es JSON válido. Es un error del
- * cliente (400) y no un fallo del servidor: sin este caso terminaría como un
- * 500 genérico y el consumidor de la API no sabría qué corregir.
- */
+/** Bad Request */
 function isJsonParseError(error: unknown): boolean {
   return (
     error instanceof SyntaxError &&
@@ -31,12 +27,7 @@ function zodIssues(error: ZodError): FieldIssue[] {
   }));
 }
 
-/**
- * Único punto donde un error se convierte en respuesta. Los errores previstos
- * viajan con su código de dominio; cualquier otro se registra completo y se
- * responde con un 500 genérico: al cliente nunca le llega un stack trace, el
- * mensaje del driver ni la cadena de conexión.
- */
+/** Al cliente nunca le llega un stack, la cadena de conexión ni el driver. */
 export function errorHandler(logger: Logger) {
   return (error: unknown, req: Request, res: Response, _next: NextFunction): void => {
     const requestId = req.requestId;

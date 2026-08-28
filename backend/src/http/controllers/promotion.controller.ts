@@ -9,16 +9,10 @@ import {
   transitionBodySchema,
 } from '../schemas/promotion.schemas';
 
-/**
- * El controlador solo traduce: valida la forma del mensaje, llama al servicio y
- * elige el código de éxito. No contiene ni una regla de negocio.
- */
 export function createPromotionRouter(service: PromotionService): Router {
   const router = Router();
 
-  // Debe declararse antes de '/:id'; de lo contrario 'summary' entraría por la
-  // ruta paramétrica y devolvería un error confuso en lugar del resumen.
-  router.get(
+    router.get(
     '/summary',
     asyncHandler(async (_req, res) => {
       res.json(await service.summary());
@@ -59,11 +53,7 @@ export function createPromotionRouter(service: PromotionService): Router {
     }),
   );
 
-  /**
-   * La transición es un sub-recurso y no un PUT sobre el campo `status`:
-   * tiene reglas propias y una familia de errores distinta (409), y modelarla
-   * como edición mezclaría dos operaciones con semánticas incompatibles.
-   */
+  /** Sub-recurso y no un campo editable: tiene reglas y errores propios (409). */
   router.post(
     '/:id/transitions',
     asyncHandler(async (req, res) => {

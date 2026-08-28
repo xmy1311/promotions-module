@@ -6,12 +6,8 @@ import type { Logger } from '../../config/logger';
 const MIGRATIONS_DIR = join(__dirname, 'migrations');
 
 /**
- * Migrador mínimo y suficiente: scripts .sql numerados, aplicados una sola vez
- * y registrados en `schema_migrations`. Se prefiere a un ORM porque el esquema
- * queda versionado como SQL legible y revisable en el diff.
- *
- * Se ejecuta al arrancar, antes de abrir el puerto: si el esquema no está
- * listo, el proceso no escucha y /health no puede responder 200 en falso.
+ * Scripts .sql numerados, aplicados una vez y registrados en schema_migrations.
+ * Corre antes de abrir el puerto: /health no puede dar 200 sin esquema.
  */
 export async function runMigrations(pool: sql.ConnectionPool, logger: Logger): Promise<void> {
   await pool.request().query(`

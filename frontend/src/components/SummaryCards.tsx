@@ -19,8 +19,7 @@ export function SummaryCards({ summary, isLoading }: Props) {
     { label: 'Finalizadas', value: summary?.finished ?? 0, accent: 'text-slate-600' },
     {
       label: 'Vigentes hoy',
-      // El criterio se rotula de forma explícita porque es una decisión de
-      // interpretación del enunciado, no una obviedad.
+      // la promoción está activa y dentro del rango de fechas
       hint: 'Activas y dentro del rango de fechas',
       value: summary?.activeToday ?? 0,
       accent: 'text-indigo-600',

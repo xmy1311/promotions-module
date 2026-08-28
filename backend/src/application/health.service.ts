@@ -11,11 +11,7 @@ export interface HealthReport {
   };
 }
 
-/**
- * /health comprueba la dependencia de verdad: ejecuta una consulta contra la
- * base de datos. Nunca devuelve el mensaje del driver, el host ni el usuario:
- * ese detalle va al log, no a la respuesta.
- */
+/** Consulta la base de verdad; el detalle del fallo va al log, no a la respuesta. */
 export class HealthService {
   private readonly startedAt = Date.now();
 

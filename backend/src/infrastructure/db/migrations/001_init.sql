@@ -1,6 +1,4 @@
--- Esquema inicial del módulo de promociones.
--- Las invariantes de negocio se replican como CHECK a propósito: si alguien
--- escribe por fuera de la API, el dato sigue sin poder quedar inconsistente.
+--Esquema de base de datos para el módulo de promociones.
 
 IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'products')
 BEGIN
@@ -35,14 +33,13 @@ BEGIN
         CONSTRAINT FK_promotions_product
             FOREIGN KEY (product_id) REFERENCES dbo.products (id),
 
-        -- Asociación excluyente: producto o categoría, nunca ambos ni ninguno.
+        -- Producto o categoría, nunca ambos ni ninguno.
         CONSTRAINT CK_promotions_target CHECK (
             (target_type = 'PRODUCT'  AND product_id IS NOT NULL AND category   IS NULL) OR
             (target_type = 'CATEGORY' AND category   IS NOT NULL AND product_id IS NULL)
         ),
         CONSTRAINT CK_promotions_discount_type CHECK (discount_type IN ('PERCENTAGE', 'FIXED_AMOUNT')),
         CONSTRAINT CK_promotions_status        CHECK (status IN ('SCHEDULED', 'ACTIVE', 'FINISHED')),
-        -- El enunciado exige "posterior": la igualdad también se rechaza.
         CONSTRAINT CK_promotions_dates         CHECK (end_date > start_date),
         CONSTRAINT CK_promotions_name          CHECK (LEN(LTRIM(RTRIM(name))) > 0),
         CONSTRAINT CK_promotions_value CHECK (

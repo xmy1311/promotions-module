@@ -1,5 +1,4 @@
-// tsc solo emite JavaScript: los .sql de las migraciones deben copiarse al
-// bundle a mano para que la imagen de producción los encuentre en runtime.
+// tsc solo emite JavaScript: los .sql hay que copiarlos a mano.
 import { cpSync, existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';

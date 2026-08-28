@@ -8,10 +8,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-/**
- * Identificador por petición: se devuelve al cliente y acompaña cada línea de
- * log, de modo que un 500 puede rastrearse sin exponer el detalle del error.
- */
+/** controlar error inesperado 500 */
 export function requestContext(logger: Logger) {
   return (req: Request, res: Response, next: NextFunction): void => {
     req.requestId = randomUUID();

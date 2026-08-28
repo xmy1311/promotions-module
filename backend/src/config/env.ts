@@ -1,18 +1,12 @@
 import { z } from 'zod';
 import { isValidTimeZone } from '../domain/dates';
 
-/**
- * Un booleano de entorno llega como cadena. `z.coerce.boolean()` no sirve:
- * convertiría "false" en `true` porque toda cadena no vacía es verdadera.
- */
+// z.coerce.boolean() convertiría "false" en true: toda cadena no vacía lo es.
 const booleanFromString = z
   .enum(['true', 'false'])
   .transform((value) => value === 'true');
 
-/**
- * El nombre de la base se interpola en `CREATE DATABASE`, que no admite
- * parámetros. Restringir el juego de caracteres cierra esa vía de inyección.
- */
+// Se interpola en CREATE DATABASE, que no admite parámetros.
 const databaseName = z
   .string()
   .min(1)
@@ -45,10 +39,7 @@ const envSchema = z.object({
 
 export type Env = z.infer<typeof envSchema> & { corsOrigins: string[] };
 
-/**
- * Falla al arrancar, no en la primera petición, y reporta *todas* las variables
- * problemáticas de una vez en lugar de la primera.
- */
+/** Falla al arrancar y reporta todas las variables inválidas de una vez. */
 export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
   const result = envSchema.safeParse(source);
 

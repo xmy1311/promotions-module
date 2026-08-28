@@ -6,22 +6,12 @@ export interface PromotionSummary {
   scheduled: number;
   active: number;
   finished: number;
-  /**
-   * Decisión documentada (AMB-08): cuenta las promociones que realmente están
-   * descontando hoy, es decir estado ACTIVE *y* fecha de hoy dentro del rango.
-   * Se devuelve `today` para que el criterio sea auditable desde fuera.
-   */
+  /**ACTIVE y dentro del rango*/
   activeToday: number;
   today: IsoDate;
 }
 
-/**
- * El resumen se calcula en el dominio a partir de la lista completa, no con una
- * agregación en SQL, para que exista una sola definición de "vigente hoy" y
- * quede cubierta por tests unitarios. Con el volumen de un módulo de
- * promociones el coste es irrelevante; si creciera, la agregación se movería a
- * SQL usando esta función como oráculo de los tests.
- */
+
 export function buildSummary(promotions: readonly Promotion[], today: IsoDate): PromotionSummary {
   const summary: PromotionSummary = {
     scheduled: 0,

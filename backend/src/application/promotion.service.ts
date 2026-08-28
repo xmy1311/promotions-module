@@ -14,11 +14,7 @@ import type {
 import { buildSummary, type PromotionSummary } from '../domain/summary';
 import type { ProductRepository, PromotionFilter, PromotionRepository } from './ports';
 
-/**
- * Orquesta repositorios y dominio. No conoce Express ni SQL: recibe datos ya
- * tipados, aplica las reglas puras y lanza errores de dominio que la capa HTTP
- * traduce a códigos de estado.
- */
+/** Orquesta repositorios y dominio; no conoce Express ni SQL. */
 export class PromotionService {
   constructor(
     private readonly promotions: PromotionRepository,
@@ -43,11 +39,7 @@ export class PromotionService {
     return this.promotions.create(draft);
   }
 
-  /**
-   * Reemplazo completo (PUT). El formulario siempre envía el recurso entero,
-   * de modo que un PATCH parcial solo añadiría ambigüedad al actualizar el
-   * objetivo (producto <-> categoría) sin aportar valor.
-   */
+  /** Reemplazo completo: el formulario siempre envía el recurso entero. */
   async replace(id: number, draft: PromotionDraft): Promise<Promotion> {
     const existing = await this.getById(id);
     assertMutable(existing);
@@ -72,12 +64,7 @@ export class PromotionService {
     return buildSummary(promotions, this.clock.today());
   }
 
-  /**
-   * Une las reglas puras del dominio con la única comprobación que requiere
-   * consultar el catálogo: que el objetivo asociado exista de verdad. Sin esto,
-   * un productId inexistente se convertiría en un 500 por violación de la clave
-   * foránea en lugar de un 422 con el campo señalado.
-   */
+  /** Sin comprobar el catálogo, un productId inexistente sería 500 en vez de 422. */
   private async assertDraftIsValid(draft: PromotionDraft): Promise<void> {
     const issues: FieldIssue[] = validatePromotionDraft(draft);
 

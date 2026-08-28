@@ -61,8 +61,7 @@ export function PromotionForm({
     reset(editing === null ? EMPTY_FORM_VALUES : toFormValues(editing));
   }, [editing, reset]);
 
-  // El backend es la autoridad final: sus errores de validación se proyectan
-  // sobre el campo correspondiente en lugar de mostrarse como un mensaje suelto.
+  //Los errores se muestran sobre el campo correspondiente.
   useEffect(() => {
     for (const issue of serverIssues) {
       if (issue.field in EMPTY_FORM_VALUES) {

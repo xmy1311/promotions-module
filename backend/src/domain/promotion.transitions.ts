@@ -7,10 +7,8 @@ import {
 import type { Promotion, PromotionStatus } from './promotion.types';
 
 /**
- * La máquina de estados es un dato, no una cadena de condicionales: añadir un
- * estado es editar esta tabla, no repartir `if` por los servicios.
- *
- *   SCHEDULED --activar--> ACTIVE --finalizar--> FINISHED (terminal)
+ * Agrega las transiciones de estado permitidas para cada estado.
+ * Se puede pasar de SCHEDULED a ACTIVE y de ACTIVE a FINISHED.
  */
 export const ALLOWED_TRANSITIONS: Record<PromotionStatus, readonly PromotionStatus[]> = {
   SCHEDULED: ['ACTIVE'],
@@ -22,11 +20,7 @@ export function canTransition(from: PromotionStatus, to: PromotionStatus): boole
   return ALLOWED_TRANSITIONS[from].includes(to);
 }
 
-/**
- * Decisión documentada (AMB-03): no se permite activar una promoción cuyo rango
- * ya terminó. Activar algo caducado es exactamente el error que el módulo
- * existe para evitar.
- */
+/**No se activar una promoción ya finalizada */
 export function assertTransitionAllowed(
   promotion: Promotion,
   to: PromotionStatus,
@@ -49,7 +43,7 @@ export function assertTransitionAllowed(
   }
 }
 
-/** Una promoción finalizada es inmutable en todo, no solo en sus datos. */
+/**Una promocion finalizada no es editable */
 export function assertMutable(promotion: Promotion): void {
   if (promotion.status === 'FINISHED') {
     throw new PromotionImmutableError();

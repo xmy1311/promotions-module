@@ -5,12 +5,7 @@ const PERCENTAGE_MIN = 1;
 const PERCENTAGE_MAX = 100;
 
 /**
- * Validación de formulario. Duplica a propósito las reglas del backend: el
- * servidor sigue siendo la autoridad final, pero el usuario merece saber que
- * un porcentaje de 150 es inválido sin esperar un viaje de red.
- *
- * Todos los campos son cadenas porque provienen de inputs nativos; la
- * conversión a los tipos de la API ocurre en `toPromotionPayload`.
+ * Valida los datos del formulario de creación/edición de promociones.
  */
 export const promotionFormSchema = z
   .object({
@@ -58,8 +53,7 @@ export const promotionFormSchema = z
       });
     }
 
-    // Comparación lexicográfica de cadenas ISO: equivale a la cronológica y no
-    // introduce ninguna conversión de zona horaria.
+    // Comparación lexicográfica de cadenas ISO: equivale a la cronológica.
     if (values.startDate !== '' && values.endDate !== '' && values.endDate <= values.startDate) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

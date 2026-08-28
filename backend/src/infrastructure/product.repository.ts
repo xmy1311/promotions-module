@@ -32,11 +32,7 @@ export class SqlProductRepository implements ProductRepository {
     return result.recordset.length > 0;
   }
 
-  /**
-   * La categoría no tiene tabla propia: es un atributo de products (decisión
-   * AMB-01, 2 tablas). Este método es la fuente de verdad de las categorías
-   * válidas y suple la integridad referencial que daría una tabla dedicada.
-   */
+  /** listar categorías. */
   async listCategories(): Promise<string[]> {
     const result = await this.pool.request().query<{ category: string }>(`
         SELECT DISTINCT category

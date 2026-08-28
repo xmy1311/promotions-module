@@ -12,12 +12,7 @@ export interface FieldIssue {
   message: string;
 }
 
-/**
- * Error de negocio con la información mínima que el borde HTTP necesita para
- * construir una respuesta. El dominio decide el `code`; la capa HTTP se limita
- * a traducirlo. Ningún error de esta jerarquía transporta detalles de
- * infraestructura.
- */
+/** Documentación de errores de la aplicación */
 export class AppError extends Error {
   constructor(
     readonly code: AppErrorCode,

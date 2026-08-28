@@ -12,11 +12,9 @@ function baseConfig(env: Env): sql.config {
     pool: { max: env.DB_POOL_MAX, min: 0, idleTimeoutMillis: 30_000 },
     options: {
       encrypt: env.DB_ENCRYPT,
-      // Las columnas DATE deben volver como medianoche UTC; sin esto el driver
-      // las interpretaría en la zona del contenedor y el día podría desplazarse.
+      // Sin esto el driver leería las columnas DATE en la zona del contenedor.
       useUTC: true,
-      // La imagen de SQL Server usa un certificado autofirmado. En producción
-      // real esto sería false y se montaría el certificado de la organización.
+      // Certificado autofirmado de la imagen; en producción iría en false.
       trustServerCertificate: env.DB_TRUST_SERVER_CERTIFICATE,
       enableArithAbort: true,
     },
@@ -24,12 +22,8 @@ function baseConfig(env: Env): sql.config {
 }
 
 /**
- * La base de datos de la aplicación no existe en una instancia recién creada:
- * la imagen de SQL Server solo trae las bases del sistema. Se crea conectando
- * primero a `master`.
- *
- * `CREATE DATABASE` no admite parámetros, por eso `DB_NAME` está restringido en
- * el esquema de configuración a `[A-Za-z0-9_]`.
+ * La imagen solo trae las bases del sistema. `CREATE DATABASE` no admite
+ * parámetros: por eso DB_NAME está acotado en el esquema de configuración.
  */
 export async function ensureDatabaseExists(env: Env, logger: Logger): Promise<void> {
   const masterPool = new sql.ConnectionPool({ ...baseConfig(env), database: 'master' });
@@ -44,11 +38,7 @@ export async function ensureDatabaseExists(env: Env, logger: Logger): Promise<vo
   }
 }
 
-/**
- * El healthcheck de Compose ya espera a que SQL Server acepte conexiones, pero
- * el reintento cubre el arranque fuera de Docker y el instante entre que el
- * motor responde y termina de recuperar la base.
- */
+/** Reintenta: cubre el arranque fuera de Docker y la recuperación de la base. */
 export async function createPool(
   env: Env,
   logger: Logger,
@@ -78,11 +68,7 @@ export async function createPool(
   );
 }
 
-/**
- * Sonda usada por /health. El timeout es imprescindible: una base colgada
- * (a diferencia de una caída) dejaría la petición esperando indefinidamente y
- * el healthcheck nunca daría un veredicto.
- */
+/** El timeout distingue una base colgada de una caída. */
 export function createDatabaseProbe(pool: sql.ConnectionPool): DatabaseProbe {
   return {
     async ping(timeoutMs: number): Promise<void> {
