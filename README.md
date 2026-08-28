@@ -1,8 +1,7 @@
 # Módulo de Gestión de Promociones
 
 Aplicación web para registrar promociones de un punto de venta y controlar su
-**estado** y su **vigencia**, evitando el problema que motiva la prueba:
-descuentos activos fuera de su rango de fechas o porcentajes mal aplicados.
+**estado** y su **vigencia**, evitando descuentos activos fuera de su rango de fechas o porcentajes mal aplicados.
 
 | | |
 |---|---|
