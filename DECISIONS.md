@@ -336,3 +336,26 @@ todos competirían con la prioridad declarada de calidad sobre cantidad.
 | Ciclo de vida automático | Tarea programada que finalice las promociones vencidas, pasando por la **misma** máquina de estados que la API. |
 | Observabilidad | `/metrics` en formato Prometheus y `requestId` propagado a un agregador de logs. |
 | Documentación de API | Generar OpenAPI desde los esquemas Zod existentes, sin duplicar el contrato. |
+
+---
+
+## 14. Uso de IA en el desarrollo
+
+Usé asistencia de IA durante la construcción de este módulo. La prueba no lo
+restringe, así que lo declaro abiertamente junto con el reparto del trabajo.
+
+**Lo que decidí yo:** el stack dentro de las restricciones del enunciado, la
+resolución de cada ambigüedad (§7), el alcance de lo que deliberadamente no se
+implementa (§13) y los criterios de calidad: separación de capas, dominio puro y
+testeable, reglase de negocio  en base de datos, y comentarios que justifiquen
+el porqué en lugar de describir el qué.
+
+**Dónde aceleré con IA:** redacción del código a partir de esos criterios,
+construcción de la batería de pruebas alrededor de las reglas que definí, y
+borradores de documentación.
+
+**Lo que verifiqué yo:** lint, tipos, las 116 pruebas, ambos builds,
+`docker compose up`, el smoke test contra la aplicación real y el pipeline
+completo en GitHub Actions. Revisé el código y pedí correcciones — entre otras,
+reducir los comentarios a los que explican una decisión no evidente.
+
