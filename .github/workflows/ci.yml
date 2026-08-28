@@ -127,16 +127,16 @@ jobs:
       - name: Verificar variables requeridas
         run: |
           set -a && . ./.env && set +a
-          ./scripts/check-required-env.sh
+          bash scripts/check-required-env.sh
 
       - name: Levantar la aplicación
         run: docker compose up -d --build
 
       - name: Esperar a que /health responda 200
-        run: ./scripts/wait-for-health.sh http://localhost:3000/health 240
+        run: bash scripts/wait-for-health.sh http://localhost:3000/health 240
 
       - name: Smoke test de la API y la base de datos
-        run: ./scripts/smoke-test.sh http://localhost:3000
+        run: bash scripts/smoke-test.sh http://localhost:3000
 
       - name: Verificar que el frontend se sirve
         run: |
